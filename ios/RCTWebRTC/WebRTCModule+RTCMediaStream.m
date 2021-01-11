@@ -228,6 +228,18 @@ RCT_EXPORT_METHOD(mediaStreamTrackSwitchCamera:(nonnull NSString *)trackID)
   }
 }
 
+#pragma mark - Camera Manipulation
+
+RCT_EXPORT_METHOD(mediaStreamTrackZoomTo:(nonnull NSString *)trackID : (CGFloat)scale)
+{
+  RTCMediaStreamTrack *track = [self trackForId:trackID];
+    if (track) {
+        if (track.videoCaptureController) {  // It could be a remote track!
+            [track.videoCaptureController zoomTo:scale];
+        }
+    }
+}
+
 #pragma mark - Helpers
 
 - (RTCMediaStreamTrack*)trackForId:(NSString*)trackId

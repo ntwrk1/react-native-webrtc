@@ -121,6 +121,28 @@
     [self startCapture];
 }
 
+-(void)zoomTo:(CGFloat)scale {
+        AVCaptureDevice *device;
+        if (_deviceId) {
+            device = [AVCaptureDevice deviceWithUniqueID:_deviceId];
+        }
+        if (!device) {
+            AVCaptureDevicePosition position
+                = _usingFrontCamera
+                    ? AVCaptureDevicePositionFront
+                    : AVCaptureDevicePositionBack;
+            device = [self findDeviceForPosition:position];
+        }
+        NSError *lockError;
+        if ([device lockForConfiguration:&lockError] == YES) {
+            [device setVideoZoomFactor:scale];
+            [device unlockForConfiguration];
+        }
+        if (lockError) {
+            RCTLogError(@"[VideoCaptureController] Error locking device: %@", lockError);
+        }
+}
+
 #pragma mark Private
 
 - (AVCaptureDevice *)findDeviceForPosition:(AVCaptureDevicePosition)position {

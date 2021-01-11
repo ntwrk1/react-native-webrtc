@@ -1,6 +1,6 @@
 'use strict';
 
-import {NativeModules} from 'react-native';
+import {NativeModules,Platform} from 'react-native';
 import EventTarget from 'event-target-shim';
 import MediaStreamErrorEvent from './MediaStreamErrorEvent';
 import type MediaStreamError from './MediaStreamError';
@@ -84,6 +84,19 @@ class MediaStreamTrack extends EventTarget(MEDIA_STREAM_TRACK_EVENTS) {
       throw new Error('Only implemented for video tracks');
     }
     WebRTCModule.mediaStreamTrackSwitchCamera(this.id);
+  }
+
+  _zoomTo(scale) {
+    if (this.remote) {
+      throw new Error('Not implemented for remote tracks');
+    }
+    if (this.kind !== 'video') {
+      throw new Error('Only implemented for video tracks');
+    }
+    if (Platform.OS !== 'ios') {
+      throw new Error('Unsupported platform');
+    }
+    WebRTCModule.mediaStreamTrackZoomTo(this.id, scale);
   }
 
   applyConstraints() {
