@@ -240,6 +240,20 @@ RCT_EXPORT_METHOD(mediaStreamTrackZoomTo:(nonnull NSString *)trackID : (CGFloat)
     }
 }
 
+RCT_EXPORT_METHOD(mediaStreamTrackFocusAt:(nonnull NSString *)trackID : (CGFloat)x : (CGFloat)y)
+{
+  RTCMediaStreamTrack *track = [self trackForId:trackID];
+    if (track) {
+        if (track.videoCaptureController) {  // It could be a remote track!
+            // iOS implementation assumes landscape orientation with home button on the right
+            CGFloat iosX = y;
+            CGFloat iosY = 1 - x;
+            [track.videoCaptureController focusAt:CGPointMake(iosX, iosY)];
+            NSLog(@"ios focusing at %f, %f", iosX, iosY);
+        }
+    }
+}
+
 #pragma mark - Helpers
 
 - (RTCMediaStreamTrack*)trackForId:(NSString*)trackId

@@ -143,6 +143,39 @@
         }
 }
 
+-(void)focusAt:(CGPoint)point {
+    AVCaptureDevice *device;
+    if (_deviceId) {
+        device = [AVCaptureDevice deviceWithUniqueID:_deviceId];
+    }
+    if (!device) {
+        AVCaptureDevicePosition position
+            = _usingFrontCamera
+                ? AVCaptureDevicePositionFront
+                : AVCaptureDevicePositionBack;
+        device = [self findDeviceForPosition:position];
+    }
+    NSError *lockError;
+    if ([device lockForConfiguration:&lockError] == YES) {
+        if ([device isFocusPointOfInterestSupported]) {
+            [device setFocusPointOfInterest:point];
+        }
+        if ([device isFocusModeSupported:AVCaptureFocusModeAutoFocus]) {
+            [device setFocusMode:AVCaptureFocusModeAutoFocus];
+        }
+        if ([device isExposurePointOfInterestSupported]) {
+            [device setExposurePointOfInterest:(point)];
+        }
+        if ([device isExposureModeSupported:AVCaptureExposureModeAutoExpose]) {
+            [device setExposureMode:AVCaptureExposureModeAutoExpose];
+        }
+        [device unlockForConfiguration];
+    }
+    if (lockError) {
+        RCTLogError(@"[VideoCaptureController] Error locking device: %@", lockError);
+    }
+}
+
 #pragma mark Private
 
 - (AVCaptureDevice *)findDeviceForPosition:(AVCaptureDevicePosition)position {

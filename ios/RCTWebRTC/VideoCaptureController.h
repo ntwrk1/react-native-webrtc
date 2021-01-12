@@ -10,5 +10,6 @@
 -(void)stopCapture;
 -(void)switchCamera;
 -(void)zoomTo:(CGFloat)scale;
+-(void)focusAt:(CGPoint)point;
 
 @end
